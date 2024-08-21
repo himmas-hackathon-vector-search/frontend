@@ -5,14 +5,23 @@ import DefaultSection from "../DefaultSection";
 import IconCross from "../icons/IconCross";
 import IconUploadMain from "../icons/IconUploadMain";
 
-type DataFile = {
+interface DataFile {
   file: File | null;
   uploadProgress: number;
   baseDataId: string | null;
   errorMessage: string | null;
-};
+}
 
-const UploadData = () => {
+interface UploadDataProps {
+  targetFile: string;
+  remind: string;
+  title: string;
+  description: string;
+  onCompleted: (InfoId: string) => void;
+  onCanceled: () => void;
+}
+
+const UploadData = (props: UploadDataProps) => {
   const [dataFile, setDataFile] = useState<DataFile>({
     file: null,
     uploadProgress: 0,
@@ -22,6 +31,7 @@ const UploadData = () => {
 
   const handleFileChange = (file: File[]) => {
     setDataFile((prev) => ({ ...prev, file: file[0] }));
+    props.onCompleted(file[0].name);
   };
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -42,10 +52,19 @@ const UploadData = () => {
     },
   });
 
+  const handleCancel = () => {
+    setDataFile({
+      file: null,
+      uploadProgress: 0,
+      baseDataId: null,
+      errorMessage: null,
+    });
+    props.onCanceled();
+  };
+
   return (
-    <DefaultSection>
+    <DefaultSection {...props}>
       <div className="flex flex-col space-y-4 items-center">
-        <h1 className="text-5xl mb-2 font-bold text-center">上傳題庫</h1>
         {!dataFile.file && (
           <div
             {...getRootProps()}
@@ -59,19 +78,18 @@ const UploadData = () => {
               </p>
             ) : (
               <p className=" hidden sm:flex text-sm mt-2 text-gray-500">
-                將題庫檔拖移至此
+                {`將 ${props.targetFile} 拖移至此`}
               </p>
             )}
           </div>
         )}
-
+        {dataFile.errorMessage && (
+          <p className="text-red-500 text-center">{dataFile.errorMessage}</p>
+        )}
         {dataFile.file && (
           <div className="flex items-center space-x-2">
             <span>{dataFile.file.name}</span>
-            <button
-              type="button"
-              onClick={() => setDataFile({ ...dataFile, file: null })}
-            >
+            <button type="button" onClick={handleCancel}>
               <IconCross className="size-4" fill="#dc2626" />
             </button>
           </div>
