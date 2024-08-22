@@ -9,7 +9,7 @@ const SubmitDatabase = ({ ...props }) => {
           text="初始化"
           hoveredText="開始初始化"
           onClick={() => {
-            console.log("start");
+            console.log(props.databaseInfo);
           }}
         />
       </div>

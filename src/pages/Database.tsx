@@ -44,6 +44,7 @@ const DatabasePage = () => {
             remind="step 3"
             title="初始化資料庫"
             description="開始初始化屬於你的問答題庫吧！"
+            databaseInfo={databaseInfo}
           />
         </>
       )}

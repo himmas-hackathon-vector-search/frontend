@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import DefaultSection from "../DefaultSection";
+import useHttpHandler, { initState } from "../../hooks/httpHandler";
 
 import IconCross from "../icons/IconCross";
 import IconUploadMain from "../icons/IconUploadMain";
+import IconLoading from "../icons/IconLoading";
+import "./UploadData.module.css";
 
 interface DataFile {
   file: File | null;
-  uploadProgress: number;
-  baseDataId: string | null;
-  errorMessage: string | null;
+  uploadedId: string | null;
 }
 
 interface UploadDataProps {
@@ -24,14 +25,19 @@ interface UploadDataProps {
 const UploadData = (props: UploadDataProps) => {
   const [dataFile, setDataFile] = useState<DataFile>({
     file: null,
-    uploadProgress: 0,
-    baseDataId: null,
-    errorMessage: null,
+    uploadedId: null,
   });
+  const { requestState, setRequestState, postFile } = useHttpHandler();
 
-  const handleFileChange = (file: File[]) => {
+  const handleFileChange = async (file: File[]) => {
     setDataFile((prev) => ({ ...prev, file: file[0] }));
-    props.onCompleted(file[0].name);
+
+    const response = await postFile("/api/upload", file[0]);
+    if (requestState.errorMessage) {
+      console.error(requestState.errorMessage);
+    } else {
+      props.onCompleted(response.path);
+    }
   };
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -53,11 +59,10 @@ const UploadData = (props: UploadDataProps) => {
   });
 
   const handleCancel = () => {
+    setRequestState(initState);
     setDataFile({
       file: null,
-      uploadProgress: 0,
-      baseDataId: null,
-      errorMessage: null,
+      uploadedId: null,
     });
     props.onCanceled();
   };
@@ -83,18 +88,46 @@ const UploadData = (props: UploadDataProps) => {
             )}
           </div>
         )}
-        {dataFile.errorMessage && (
-          <p className="text-red-500 text-center">{dataFile.errorMessage}</p>
-        )}
-        {dataFile.file && (
-          <div className="flex items-center space-x-2">
-            <span>{dataFile.file.name}</span>
-            <button type="button" onClick={handleCancel}>
-              <IconCross className="size-4" fill="#dc2626" />
-            </button>
-          </div>
-        )}
-
+        <div className="flex flex-col w-full items-center">
+          {dataFile.file && (
+            <div className="flex items-center space-x-2">
+              <span
+                className={
+                  requestState.errorMessage ? "text-red-500" : "text-gray-700"
+                }
+              >
+                {dataFile.file.name}
+              </span>
+              <span
+                className={`ml-8 ${
+                  requestState.errorMessage ? "text-red-500" : "text-gray-700"
+                }`}
+              >
+                {requestState.progress}%
+              </span>
+              {requestState.isFetching ? (
+                <IconLoading className="size-4 animate-spin" />
+              ) : (
+                <button type="button" onClick={handleCancel}>
+                  <IconCross className="size-4" fill="#dc2626" />
+                </button>
+              )}
+            </div>
+          )}
+          {requestState.progress && (
+            <div className="flex w-2/3 h-4 overflow-hidden bg-gray-200 rounded">
+              <div
+                className={`transition-all progress-bar ${requestState.statusClass}`}
+                style={{ width: requestState.progress + "%" }}
+              />
+            </div>
+          )}
+          {requestState.errorMessage && (
+            <p className="text-red-500 text-center">
+              {requestState.errorMessage}
+            </p>
+          )}
+        </div>
         <p className="text-sm text-gray-500">
           支援格式：.csv, .xlsx
           <br />
