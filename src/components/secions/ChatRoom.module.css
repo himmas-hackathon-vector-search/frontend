@@ -1,0 +1,3 @@
+.autoHeight {
+  height: calc(100vh - 112px - 100px - 16px);
+}

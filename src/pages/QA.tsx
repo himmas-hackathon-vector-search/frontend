@@ -1,5 +1,7 @@
+import ChatRoom from "../components/secions/ChatRoom";
+
 const QAPage = () => {
-  return <h1>QA</h1>;
+  return <ChatRoom />;
 };
 
 export default QAPage;
