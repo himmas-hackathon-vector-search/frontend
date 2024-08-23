@@ -1,9 +1,12 @@
 import { useRef } from "react";
+import { motion } from "framer-motion";
+import { useTheme } from "../../store/useTheme";
 
 import IconAsk from "../icons/IconAsk";
 import IconSend from "../icons/IconSend";
 
 const MessageSender = () => {
+  const { theme } = useTheme();
   const messageRef = useRef<HTMLInputElement>(null);
 
   const handleAsk = () => {
@@ -28,13 +31,18 @@ const MessageSender = () => {
           }
         }}
       />
-      <button
+      <motion.button
         type="button"
         className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-1"
         onClick={handleAsk}
+        whileHover={{ scale: 1.1, rotate: -30 }}
+        transition={{ type: "spring", stiffness: 300 }}
       >
-        <IconSend className="size-8 dark:fill-white" />
-      </button>
+        <IconSend
+          className="size-8"
+          stroke={theme === "dark" ? "#ffffff" : "#000000"}
+        />
+      </motion.button>
     </div>
   );
 };

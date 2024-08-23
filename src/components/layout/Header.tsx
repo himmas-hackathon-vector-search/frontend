@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useTheme } from "../../store/useTheme";
 
 import IconSearch from "../icons/IconSearch";
@@ -44,17 +45,19 @@ const Header = () => {
         >
           Database
         </NavLink>
-        <button
+        <motion.button
           onClick={toggleTheme}
           className="focus:outline-none"
           aria-label="Toggle Theme"
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          transition={{ type: "spring", stiffness: 300 }}
         >
           {theme === "dark" ? (
             <IconSun className="size-8 hover:bg-gray-700 hover:fill-blue-400 rounded-full p-1" />
           ) : (
             <IconMoon className="size-8 hover:bg-gray-200 hover:fill-blue-500 rounded-full p-1" />
           )}
-        </button>
+        </motion.button>
       </div>
     </header>
   );

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { motion } from "framer-motion";
 
 interface DefaultSectionProps {
   children: ReactNode;
@@ -14,7 +15,17 @@ const DefaultSection = ({
   description,
 }: DefaultSectionProps) => {
   return (
-    <section className="flex flex-col p-8 mt-4 mb-8 shadow-lg rounded-md border border-gray-100 dark:border-gray-700">
+    <motion.section
+      className="flex flex-col p-8 mt-4 mb-8 shadow-lg rounded-md border border-gray-100 dark:border-gray-700"
+      variants={{
+        hidden: { opacity: 0, y: -50 },
+        visible: { opacity: 1, y: 0 },
+      }}
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      transition={{ duration: 0.3 }}
+    >
       <header className="mb-6 pb-2 space-y-2 border-b">
         {remind && (
           <p className="text-sm text-gray-400 font-medium uppercase">
@@ -29,7 +40,7 @@ const DefaultSection = ({
         )}
       </header>
       <main>{children}</main>
-    </section>
+    </motion.section>
   );
 };
 

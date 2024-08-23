@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import SubmitDatabase from "../components/secions/SubmitDatabase";
 import UploadData from "../components/secions/UploadData";
 
@@ -26,28 +27,33 @@ const DatabasePage = () => {
         }
         onCanceled={() => setDatabaseInfo({ data: null, dictionary: null })}
       />
-      {databaseInfo.data && (
-        <>
-          <UploadData
-            targetFile="字典檔案"
-            remind="(option) step2"
-            title="上傳字典"
-            description="字典可以幫助AI再遇到問題時更準確地找到適合的回答。"
-            onCompleted={(dictionaryId: string) =>
-              setDatabaseInfo((prev) => ({ ...prev, dictionary: dictionaryId }))
-            }
-            onCanceled={() =>
-              setDatabaseInfo((prev) => ({ ...prev, dictionary: null }))
-            }
-          />
-          <SubmitDatabase
-            remind="step 3"
-            title="初始化資料庫"
-            description="開始初始化屬於你的問答題庫吧！"
-            databaseInfo={databaseInfo}
-          />
-        </>
-      )}
+      <AnimatePresence>
+        {databaseInfo.data && (
+          <>
+            <UploadData
+              targetFile="字典檔案"
+              remind="(option) step2"
+              title="上傳字典"
+              description="字典可以幫助AI再遇到問題時更準確地找到適合的回答。"
+              onCompleted={(dictionaryId: string) =>
+                setDatabaseInfo((prev) => ({
+                  ...prev,
+                  dictionary: dictionaryId,
+                }))
+              }
+              onCanceled={() =>
+                setDatabaseInfo((prev) => ({ ...prev, dictionary: null }))
+              }
+            />
+            <SubmitDatabase
+              remind="step 3"
+              title="初始化資料庫"
+              description="開始初始化屬於你的問答題庫吧！"
+              databaseInfo={databaseInfo}
+            />
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 };
