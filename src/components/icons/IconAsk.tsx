@@ -1,12 +1,6 @@
-const IconAsk = ({
-  className,
-  fill = "#111918",
-  stroke,
-}: {
-  className?: string;
-  fill?: string;
-  stroke?: string;
-}) => {
+import IconProps from "./iconInterface";
+
+const IconAsk = ({ className, fill = "#111918", stroke }: IconProps) => {
   return (
     <svg
       version="1.1"

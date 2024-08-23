@@ -1,12 +1,10 @@
+import IconProps from "./iconInterface";
+
 const IconUploadMain = ({
   className,
   fill = "none",
   stroke = "#000000",
-}: {
-  className?: string;
-  fill?: string;
-  stroke?: string;
-}) => {
+}: IconProps) => {
   return (
     <svg
       width="800px"

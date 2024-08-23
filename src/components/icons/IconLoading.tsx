@@ -1,12 +1,6 @@
-const IconLoading = ({
-  className,
-  fill = "none",
-  stroke,
-}: {
-  className?: string;
-  fill?: string;
-  stroke?: string;
-}) => {
+import IconProps from "./iconInterface";
+
+const IconLoading = ({ className, fill = "none", stroke }: IconProps) => {
   return (
     <svg
       width="800px"

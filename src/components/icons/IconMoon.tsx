@@ -1,12 +1,6 @@
-const Moon = ({
-  className,
-  fill = "currentColor",
-  stroke,
-}: {
-  className?: string;
-  fill?: string;
-  stroke?: string;
-}) => (
+import IconProps from "./iconInterface";
+
+const Moon = ({ className, fill = "currentColor", stroke }: IconProps) => (
   <svg
     width="24px"
     height="24px"

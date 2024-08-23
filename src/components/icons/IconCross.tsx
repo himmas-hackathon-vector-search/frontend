@@ -1,12 +1,10 @@
+import IconProps from "./iconInterface";
+
 const IconCross = ({
   className,
   fill = "none",
   stroke = "none",
-}: {
-  className?: string;
-  fill?: string;
-  stroke?: string;
-}) => {
+}: IconProps) => {
   return (
     <svg
       width="800px"

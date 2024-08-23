@@ -1,12 +1,10 @@
+import IconProps from "./iconInterface";
+
 const IconSearch = ({
   className,
   fill = "none",
   stroke = "#323232",
-}: {
-  className?: string;
-  fill?: string;
-  stroke?: string;
-}) => {
+}: IconProps) => {
   return (
     <svg
       width="800px"
