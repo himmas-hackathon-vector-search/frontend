@@ -1,14 +1,22 @@
 import { NavLink } from "react-router-dom";
+import { useTheme } from "../../store/useTheme";
 
 import IconSearch from "../icons/IconSearch";
+import IconSun from "../icons/IconSun";
+import IconMoon from "../icons/IconMoon";
 
 const Header = () => {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <header className=" flex w-full py-10 px-4 items-center justify-between shadow-lg bg-white rounded-b-md">
+    <header className=" flex w-full py-10 px-4 items-center justify-between">
       <NavLink to="/" end>
         <div className="flex items-center justify-between">
           <div className="mr-1">
-            <IconSearch className="size-8" />
+            <IconSearch
+              className="size-8"
+              stroke={theme === "dark" ? "#ffffff" : "#000000"}
+            />
           </div>
           <div className="hidden text-2xl font-semibold sm:block">
             "Teams Name"
@@ -36,6 +44,17 @@ const Header = () => {
         >
           Database
         </NavLink>
+        <button
+          onClick={toggleTheme}
+          className="focus:outline-none"
+          aria-label="Toggle Theme"
+        >
+          {theme === "dark" ? (
+            <IconSun className="size-8 hover:bg-gray-700 hover:fill-blue-400 rounded-full p-1" />
+          ) : (
+            <IconMoon className="size-8 hover:bg-gray-200 hover:fill-blue-500 rounded-full p-1" />
+          )}
+        </button>
       </div>
     </header>
   );

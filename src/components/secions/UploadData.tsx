@@ -73,7 +73,7 @@ const UploadData = (props: UploadDataProps) => {
         {!dataFile.file && (
           <div
             {...getRootProps()}
-            className="flex flex-col items-center justify-center p-4 size-40 sm:w-80 sm:h-40 border-2 border-dashed rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100"
+            className="flex flex-col items-center justify-center p-4 size-40 sm:w-80 sm:h-40 border-2 border-dashed rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700"
           >
             <input {...getInputProps()} />
             <IconUploadMain className="size-12 sm:size-16" stroke="#4b5563" />
@@ -90,17 +90,21 @@ const UploadData = (props: UploadDataProps) => {
         )}
         <div className="flex flex-col w-full items-center">
           {dataFile.file && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center max-w-full space-x-2">
               <span
                 className={
-                  requestState.errorMessage ? "text-red-500" : "text-gray-700"
+                  requestState.errorMessage
+                    ? "text-red-500 truncate"
+                    : "text-gray-700 dark:text-gray-500 truncate"
                 }
               >
                 {dataFile.file.name}
               </span>
               <span
                 className={`ml-8 ${
-                  requestState.errorMessage ? "text-red-500" : "text-gray-700"
+                  requestState.errorMessage
+                    ? "text-red-500"
+                    : "text-gray-700 dark:text-gray-500"
                 }`}
               >
                 {requestState.progress}%

@@ -20,7 +20,7 @@ interface Message {
 
 const MessageBox = () => {
   return (
-    <div className="flex flex-col h-full px-1 py-4 bg-gray-100 rounded-md border overflow-y-auto">
+    <div className="flex flex-col h-full px-1 py-4 bg-gray-100 dark:bg-gray-900 rounded-md border overflow-y-auto">
       {samples.map((message: Message, index: number) => (
         <div
           key={index}

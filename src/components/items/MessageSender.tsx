@@ -14,7 +14,7 @@ const MessageSender = () => {
 
   return (
     <div className="flex justify-between items-center">
-      <IconAsk className=" hidden sm:block size-8" />
+      <IconAsk className=" hidden sm:block size-8 dark:fill-white" />
       <input
         type="text"
         placeholder="Ask me a question"
@@ -30,10 +30,10 @@ const MessageSender = () => {
       />
       <button
         type="button"
-        className="hover:bg-gray-200 rounded-full p-1"
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-1"
         onClick={handleAsk}
       >
-        <IconSend className="size-8" />
+        <IconSend className="size-8 dark:fill-white" />
       </button>
     </div>
   );
