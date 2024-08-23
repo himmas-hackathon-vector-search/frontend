@@ -32,11 +32,15 @@ const UploadData = (props: UploadDataProps) => {
   const handleFileChange = async (file: File[]) => {
     setDataFile((prev) => ({ ...prev, file: file[0] }));
 
-    const response = await postFile("/api/upload", file[0]);
+    const uploadUrl =
+      props.targetFile === "題庫檔案"
+        ? "/database/upload/base_data"
+        : "/database/upload/dictionary";
+    const response = await postFile(uploadUrl, file[0]);
     if (requestState.errorMessage) {
       console.error(requestState.errorMessage);
     } else {
-      props.onCompleted(response.path);
+      props.onCompleted(response.data.id);
     }
   };
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -110,7 +114,7 @@ const UploadData = (props: UploadDataProps) => {
                 {requestState.progress}%
               </span>
               {requestState.isFetching ? (
-                <IconLoading className="size-4 animate-spin" />
+                <IconLoading className="size-4 animate-spin" stroke="#ffffff" />
               ) : (
                 <button type="button" onClick={handleCancel}>
                   <IconCross className="size-4" fill="#dc2626" />

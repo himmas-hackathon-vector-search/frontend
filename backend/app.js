@@ -48,23 +48,93 @@ app.use((err, req, res, next) => {
   next();
 });
 
-app.post("/api/upload", upload.single("file"), (req, res) => {
-  if (req.fileValidationError) {
+// 上傳題庫
+app.post(
+  "/api/database/upload/base_data",
+  upload.single("file"),
+  (req, res) => {
+    if (req.fileValidationError) {
+      return res
+        .status(400)
+        .json({ success: false, message: req.fileValidationError });
+    }
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No file uploaded" });
+    }
+    try {
+      const filePath = path.join(process.cwd(), req.file.path);
+      res.json({
+        success: true,
+        message: "題庫上傳成功",
+        data: { id: filePath },
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+// 上傳字典
+app.post(
+  "/api/database/upload/dictionary",
+  upload.single("file"),
+  (req, res) => {
+    if (req.fileValidationError) {
+      return res
+        .status(400)
+        .json({ success: false, message: req.fileValidationError });
+    }
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No file uploaded" });
+    }
+    try {
+      const filePath = path.join(process.cwd(), req.file.path);
+      res.json({
+        success: true,
+        message: "字典上傳成功",
+        data: { id: filePath },
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+// 初始化向量資料庫
+app.post("/api/database/init", (req, res) => {
+  const databaseInfo = req.body;
+  if (!databaseInfo?.baseDataId) {
     return res
       .status(400)
-      .json({ success: false, message: req.fileValidationError });
+      .json({ success: false, message: "No database info" });
   }
-  if (!req.file) {
-    return res
-      .status(400)
-      .json({ success: false, message: "No file uploaded" });
+  res.json({
+    success: true,
+    message: "資料庫開始初始化，等待約5分鐘後嘗試進行問答",
+    data: { qaId: new Date().toISOString() },
+  });
+});
+// 問答
+app.post("/api/qa/ask", (req, res) => {
+  const { qaId, question } = req.body;
+  if (!question) {
+    return res.status(400).json({ success: false, message: "No question" });
   }
-  try {
-    const filePath = path.join(process.cwd(), req.file.path);
-    res.json({ success: true, message: "上傳成功", path: filePath });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
+  setTimeout(() => {
+    res.json({
+      success: true,
+      message: "完成查詢",
+      data: {
+        title: "關於你的問題...",
+        answer:
+          "在首頁點擊「電子錢包」，然後點擊「綁定」，輸入您的手機號碼，然後輸入驗證碼，即可綁定成功。",
+        score: 0.12145678,
+        question: "和雲題庫",
+      },
+    });
+  }, 2000);
 });
 
 app.listen(port, () => {

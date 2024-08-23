@@ -1,18 +1,47 @@
-import { useRef } from "react";
+import { useRef, Dispatch, SetStateAction } from "react";
+import { Message } from "../interfaces";
 import { motion } from "framer-motion";
 import { useTheme } from "../../store/useTheme";
+import { AxiosResponse } from "axios";
 
 import IconAsk from "../icons/IconAsk";
 import IconSend from "../icons/IconSend";
 
-const MessageSender = () => {
+const MessageSender = ({
+  onMessage,
+  onRequest,
+}: {
+  onMessage: Dispatch<SetStateAction<Message[]>>;
+  onRequest: (url: string, body: object) => Promise<AxiosResponse>;
+}) => {
   const { theme } = useTheme();
   const messageRef = useRef<HTMLInputElement>(null);
 
   const handleAsk = () => {
-    if (!messageRef.current?.value) return;
-    console.log(messageRef.current?.value);
+    if (!messageRef.current?.value.trim()) return;
+    const messageQuestion = messageRef.current.value;
+
+    onMessage((prev) => [
+      ...prev,
+      {
+        title: null,
+        answer: null,
+        score: null,
+        question: messageQuestion,
+        createdAt: new Date().toISOString(),
+      },
+    ]);
     messageRef.current!.value = "";
+
+    onRequest("/qa/ask", { qaId: null, question: messageQuestion })
+      .then((response) => {
+        const { data } = response;
+        data.createdAt = new Date().toISOString();
+        onMessage((prev) => [...prev, data]);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (

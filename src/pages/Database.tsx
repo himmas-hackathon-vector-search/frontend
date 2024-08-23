@@ -4,14 +4,14 @@ import SubmitDatabase from "../components/secions/SubmitDatabase";
 import UploadData from "../components/secions/UploadData";
 
 interface databaseInitBy {
-  data: string | null;
-  dictionary: string | null;
+  baseDataId: string | null;
+  dictionaryId: string | null;
 }
 
 const DatabasePage = () => {
   const [databaseInfo, setDatabaseInfo] = useState<databaseInitBy>({
-    data: null,
-    dictionary: null,
+    baseDataId: null,
+    dictionaryId: null,
   });
 
   return (
@@ -23,12 +23,14 @@ const DatabasePage = () => {
         description="上傳你的問答題庫，包含預期的問題與其正確答案。
         AI會針對新的問題尋找最貼切的答案來回答。"
         onCompleted={(dataId: string) =>
-          setDatabaseInfo((prev) => ({ ...prev, data: dataId }))
+          setDatabaseInfo((prev) => ({ ...prev, baseDataId: dataId }))
         }
-        onCanceled={() => setDatabaseInfo({ data: null, dictionary: null })}
+        onCanceled={() =>
+          setDatabaseInfo({ baseDataId: null, dictionaryId: null })
+        }
       />
       <AnimatePresence>
-        {databaseInfo.data && (
+        {databaseInfo.baseDataId && (
           <>
             <UploadData
               targetFile="字典檔案"
@@ -38,11 +40,11 @@ const DatabasePage = () => {
               onCompleted={(dictionaryId: string) =>
                 setDatabaseInfo((prev) => ({
                   ...prev,
-                  dictionary: dictionaryId,
+                  dictionaryId: dictionaryId,
                 }))
               }
               onCanceled={() =>
-                setDatabaseInfo((prev) => ({ ...prev, dictionary: null }))
+                setDatabaseInfo((prev) => ({ ...prev, dictionaryId: null }))
               }
             />
             <SubmitDatabase

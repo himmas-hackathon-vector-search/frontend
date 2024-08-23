@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosResponse, AxiosError } from "axios";
 
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
 interface requestStateSchema {
   isFetching: boolean;
@@ -40,8 +40,9 @@ const useHttpHandler = () => {
         statusClass: "bg-red-500",
         errorMessage:
           error instanceof AxiosError
-            ? error.response?.data?.message
-            : "Something went wrong when fetching the data.",
+            ? error.response?.data?.message ||
+              "Something went wrong when fetching the data."
+            : "Occurred an error when fetching the data.",
         isFetching: false,
       }));
     }
@@ -64,8 +65,9 @@ const useHttpHandler = () => {
         statusClass: "bg-red-500",
         errorMessage:
           error instanceof AxiosError
-            ? error.response?.data?.message
-            : "Something went wrong when sending the data.",
+            ? error.response?.data?.message ||
+              "Something went wrong when sending the data."
+            : "Occurred an error when sending the data.",
         isFetching: false,
       }));
     } finally {
@@ -114,8 +116,9 @@ const useHttpHandler = () => {
         statusClass: "bg-red-500",
         errorMessage:
           error instanceof AxiosError
-            ? error.response?.data?.message
-            : "Something went wrong when sending the file.",
+            ? error.response?.data?.message ||
+              "Something went wrong when fetching the file."
+            : "Occurred an error when fetching the file.",
         isFetching: false,
       }));
     } finally {
