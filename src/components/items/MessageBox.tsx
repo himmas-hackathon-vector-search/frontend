@@ -38,10 +38,12 @@ const MessageBox = ({
             key={index}
             className={cn("flex", !message.title && "flex-row-reverse")}
             variants={{
-              hidden: { opacity: 0, scale: 0.8, y: 30 },
-              visiable: { opacity: 1, scale: 1, y: 0 },
+              hidden: { opacity: 0, y: 30 },
+              visiable: { opacity: 1, y: 0 },
             }}
-            transition={{ type: "just", stiffness: 300, duration: 0.1 }}
+            transition={{ type: "spring", stiffness: 300, duration: 0.1 }}
+            initial="hidden"
+            animate="visiable"
           >
             <div
               className={cn(
