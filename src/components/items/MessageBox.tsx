@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Message } from "../interfaces.js";
 import cn from "../../utils/cn.js";
 import dayjs from "dayjs";
@@ -31,11 +32,16 @@ const MessageBox = ({
       ref={messageBoxRef}
       className="flex flex-col justify-between h-full px-1 py-4 bg-gray-100 dark:bg-gray-900 rounded-md border overflow-y-auto"
     >
-      <div className="flex flex-col ">
+      <div className="flex flex-col">
         {messages.map((message: Message, index: number) => (
-          <div
+          <motion.div
             key={index}
             className={cn("flex", !message.title && "flex-row-reverse")}
+            variants={{
+              hidden: { opacity: 0, scale: 0.8, y: 30 },
+              visiable: { opacity: 1, scale: 1, y: 0 },
+            }}
+            transition={{ type: "just", stiffness: 300, duration: 0.1 }}
           >
             <div
               className={cn(
@@ -61,13 +67,16 @@ const MessageBox = ({
               </div>
 
               {message.answer && (
-                <p className="text-gray-700 mt-2">{message.answer}</p>
+                <p
+                  className="text-gray-700 mt-2"
+                  dangerouslySetInnerHTML={{ __html: message.answer }}
+                ></p>
               )}
             </div>
             <p className="flex my-2 text-xs text-gray-500 items-end">
               {formatDatetime(message.createdAt)}
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
       {isFetching && (

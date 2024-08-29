@@ -36,11 +36,11 @@ const MessageSender = ({
     onRequest("/qa/ask", { qaId: null, question: messageQuestion })
       .then((response) => {
         const { data } = response;
-        console.log("data", data);
-        data.forEach((item: Message) => {
+        const messages = data.message;
+        messages.forEach((item: Message) => {
           item.createdAt = new Date().toISOString();
         });
-        onMessage((prev) => [...prev, ...data]);
+        onMessage((prev) => [...prev, ...messages]);
       })
       .catch((error) => {
         console.error(error);

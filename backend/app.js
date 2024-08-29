@@ -35,7 +35,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, X-User"
   );
   next();
 });
@@ -126,29 +126,32 @@ app.post("/api/qa/ask", (req, res) => {
     res.json({
       success: true,
       message: "完成查詢",
-      data: [
-        {
-          title: "關於你的問題...",
-          answer:
-            "在首頁點擊「電子錢包」，然後點擊「綁定」，輸入您的手機號碼，然後輸入驗證碼，即可綁定成功。",
-          score: 0.12145678,
-          question: "和雲題庫",
-        },
-        {
-          title: "關於你的問題...",
-          answer:
-            "在首頁點擊「電子錢包」，然後點擊「綁定」，輸入您的手機號碼，然後輸入驗證碼，即可綁定成功。",
-          score: 0.12145678,
-          question: "和雲題庫",
-        },
-        {
-          title: "關於你的問題...",
-          answer:
-            "在首頁點擊「電子錢包」，然後點擊「綁定」，輸入您的手機號碼，然後輸入驗證碼，即可綁定成功。",
-          score: 0.12145678,
-          question: "和雲題庫",
-        },
-      ],
+      data: {
+        qaId: new Date().toISOString(),
+        message: [
+          {
+            title: "關於你的問題...",
+            answer:
+              "在首頁點擊「電子錢包」，然後點擊「綁定」，輸入您的手機號碼，然後輸入驗證碼，即可綁定成功。",
+            score: 0.12145678,
+            question: "和雲題庫",
+          },
+          {
+            title: "關於你的問題...",
+            answer:
+              "在首頁點擊「電子錢包」，然後點擊「綁定」，輸入您的手機號碼，然後輸入驗證碼，即可綁定成功。",
+            score: 0.12145678,
+            question: "和雲題庫",
+          },
+          {
+            title: "關於你的問題...",
+            answer:
+              '在首頁點擊「電子錢包」，然後點擊「綁定」，輸入您的手機號碼，然後輸入驗證碼，即可綁定成功。或查詢<a target="_blank" href="https://google.com" class="msg">google搜尋引琴</a>自行查看',
+            score: 0.12145678,
+            question: "和雲題庫",
+          },
+        ],
+      },
     });
   }, 2000);
 });

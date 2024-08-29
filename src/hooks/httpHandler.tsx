@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosResponse, AxiosError } from "axios";
+import { v4 as uuid4 } from "uuid";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
@@ -22,6 +23,12 @@ export const initState: requestStateSchema = {
 const useHttpHandler = () => {
   const [requestState, setRequestState] =
     useState<requestStateSchema>(initState);
+  let userId = localStorage.getItem("userId");
+  if (!userId) {
+    const newId: string = uuid4();
+    userId = newId;
+    localStorage.setItem("userId", userId);
+  }
 
   const fetchData = async (url: string) => {
     try {
@@ -51,7 +58,12 @@ const useHttpHandler = () => {
   const postData = async (url: string, body: object) => {
     try {
       setRequestState({ ...initState, isFetching: true });
-      const response: AxiosResponse = await axios.post(API_URL + url, body);
+      const response: AxiosResponse = await axios.post(API_URL + url, body, {
+        headers: {
+          "Content-Type": "application/json",
+          "X-User": userId,
+        },
+      });
       setRequestState((prev) => ({
         ...prev,
         statusClass: "bg-green-500",
