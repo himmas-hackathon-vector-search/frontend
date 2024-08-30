@@ -20,7 +20,7 @@ const Header = () => {
             />
           </div>
           <div className="hidden text-2xl font-semibold sm:block">
-            "Teams Name"
+            問題都答隊
           </div>
         </div>
       </NavLink>
