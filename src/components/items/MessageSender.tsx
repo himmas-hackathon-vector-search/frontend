@@ -10,6 +10,7 @@ import Modal from "../ui/Modal";
 
 import SystemStatus from "./SystemStatus";
 
+import IconLoading from "../icons/IconLoading";
 import IconSend from "../icons/IconSend";
 
 interface KeepedQuestion {
@@ -138,10 +139,17 @@ const MessageSender = ({
           transition={{ type: "spring", stiffness: 300 }}
           disabled={!canAsk}
         >
-          <IconSend
-            className="size-8"
-            stroke={theme === "dark" ? "#ffffff" : "#000000"}
-          />
+          {canAsk ? (
+            <IconSend
+              className="size-8"
+              stroke={theme === "dark" ? "#ffffff" : "#000000"}
+            />
+          ) : (
+            <IconLoading
+              className="animate-spin size-6"
+              stroke={theme === "dark" ? "#ffffff" : "#000000"}
+            />
+          )}
         </motion.button>
       </div>
     </>
