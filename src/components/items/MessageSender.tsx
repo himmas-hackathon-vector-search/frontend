@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Message } from "../interfaces";
 import { motion } from "framer-motion";
 import { useTheme } from "../../store/useTheme";
 import { useQaMessage } from "../../store/useQaMessage";
-import { requestStateSchema } from "../../hooks/httpHandler";
+import useHttpHandler, { requestStateSchema } from "../../hooks/httpHandler";
 import { AxiosResponse } from "axios";
 import Modal from "../ui/Modal";
 
@@ -29,6 +29,27 @@ const MessageSender = ({
   const keepedQuestion = useRef<KeepedQuestion>({ qaId: "", question: "" });
   const [showModal, setShowModal] = useState(false);
   const navigation = useNavigate();
+
+  const { fetchData } = useHttpHandler();
+  const [canAsk, setCanAsk] = useState(false);
+
+  useEffect(() => {
+    const checkSystemStatus = async () => {
+      const response = await fetchData("/database/status");
+      if (response.success && response.data?.ready) {
+        setCanAsk(true);
+      } else {
+        setCanAsk(false);
+      }
+      console.log("System status checked", response.data?.ready);
+    };
+
+    const timer = setInterval(() => {
+      checkSystemStatus();
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [fetchData]);
 
   const handleAsk = () => {
     if (!messageRef.current?.value.trim()) return;
@@ -110,11 +131,25 @@ const MessageSender = ({
       )}
 
       <div className="flex justify-between items-center">
-        <IconAsk className=" hidden sm:block size-8 dark:fill-white" />
+        <div className="relative h-full">
+          <span
+            className={`animate-ping absolute inline-flex size-2 rounded-full opacity-75 ${
+              canAsk ? "bg-green-400" : "bg-red-400"
+            }`}
+          ></span>
+          <span
+            className={`absolute inline-flex rounded-full size-2 ${
+              canAsk ? "bg-green-500" : "bg-red-500"
+            }`}
+          ></span>
+          <IconAsk className="hidden size-8 sm:inline-flex dark:fill-white" />
+        </div>
         <input
           type="text"
-          placeholder="Ask me a question"
-          className="block w-full py-2 mr-3 sm:mx-3 pl-4 outline-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder={
+            canAsk ? "Ask me a question" : "System is not ready for asking"
+          }
+          className="block w-full py-2 mr-3 sm:mx-3 pl-4 outline-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 disabled:bg-gray-300 disabled:font-bold dark:disabled:bg-gray-900"
           name="message"
           required
           ref={messageRef}
@@ -123,13 +158,15 @@ const MessageSender = ({
               handleAsk();
             }
           }}
+          disabled={!canAsk}
         />
         <motion.button
           type="button"
-          className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-1"
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-1 disabled:cursor-not-allowed"
           onClick={handleAsk}
           whileHover={{ scale: 1.1, rotate: -30 }}
           transition={{ type: "spring", stiffness: 300 }}
+          disabled={!canAsk}
         >
           <IconSend
             className="size-8"

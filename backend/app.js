@@ -128,6 +128,27 @@ app.post("/api/database/init", (req, res) => {
   //   data: null,
   // });
 });
+// 資料庫狀態
+app.get("/api/database/status", (req, res) => {
+  res.json({
+    success: true,
+    message: "資資料庫準備完成",
+    data: {
+      ready: true,
+      qaId: new Date().toISOString(),
+    },
+  });
+
+  // res.json({
+  //   success: true,
+  //   message: "資料庫尚在準備中",
+  //   data: {
+  //     ready: false,
+  //     qaId: new Date().toISOString(),
+  //   },
+  // });
+});
+
 // 問答
 app.post("/api/qa/ask", (req, res) => {
   const { qaId, question } = req.body;
