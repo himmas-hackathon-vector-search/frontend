@@ -115,6 +115,20 @@ app.post("/api/database/init", (req, res) => {
     message: "資料庫開始初始化，等待約5分鐘後嘗試進行問答",
     data: { qaId: new Date().toISOString() },
   });
+
+  // const plusedDate = new Date();
+  // plusedDate.setMinutes(plusedDate.getMinutes() + 5);
+  // res.json({
+  //   success: false,
+  //   message: "資料庫剛被初始化完成，請間隔10分鐘後進行。",
+  //   data: { qaId: plusedDate },
+  // });
+
+  // res.json({
+  //   success: false,
+  //   message: "目前尚有查詢正在進行，請稍後再進行初始化。",
+  //   data: null,
+  // });
 });
 // 問答
 app.post("/api/qa/ask", (req, res) => {
@@ -153,6 +167,14 @@ app.post("/api/qa/ask", (req, res) => {
         ],
       },
     });
+    // res.json({
+    //   success: false,
+    //   message: "資料庫發生變更，可能無法回答您預期的問題。",
+    //   data: {
+    //     qaId: new Date().toISOString(),
+    //     message: null,
+    //   },
+    // });
   }, 2000);
 });
 

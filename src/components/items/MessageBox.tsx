@@ -1,25 +1,20 @@
 import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Message } from "../interfaces.js";
+import { useQaMessage } from "../../store/useQaMessage";
 import cn from "../../utils/cn.js";
 import dayjs from "dayjs";
 
 const formatDatetime = (datetime: string) => {
-  // return dayjs(datetime).format("YYYY-MM-DD HH:mm:ss");
   if (dayjs().isSame(datetime, "day")) {
     return dayjs(datetime).format("HH:mm:ss");
   }
   return dayjs(datetime).format("YYYY-MM-DD");
 };
 
-const MessageBox = ({
-  messages,
-  isFetching,
-}: {
-  messages: Message[];
-  isFetching: boolean;
-}) => {
+const MessageBox = ({ isFetching }: { isFetching: boolean }) => {
   const messageBoxRef = useRef<HTMLDivElement>(null);
+  const { messages } = useQaMessage();
 
   useEffect(() => {
     if (messageBoxRef.current) {
@@ -41,7 +36,7 @@ const MessageBox = ({
               hidden: { opacity: 0, y: 30 },
               visiable: { opacity: 1, y: 0 },
             }}
-            transition={{ type: "spring", stiffness: 300, duration: 0.1 }}
+            transition={{ type: "just", stiffness: 300, duration: 0.1 }}
             initial="hidden"
             animate="visiable"
           >

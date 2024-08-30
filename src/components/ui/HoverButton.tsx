@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 interface HoverButtonProps {
   text: string;
@@ -16,7 +17,7 @@ const HoverButton = ({
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <button
+    <motion.button
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
@@ -24,9 +25,11 @@ const HoverButton = ({
         isHovered || disabled ? "bg-blue-400" : "bg-blue-700"
       }`}
       disabled={disabled}
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: "spring" }}
     >
       {disabled ? "處理中..." : !isHovered ? text : hoveredText}
-    </button>
+    </motion.button>
   );
 };
 

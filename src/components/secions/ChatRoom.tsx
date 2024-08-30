@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Message } from "../interfaces";
 import useHttpHandler from "../../hooks/httpHandler";
 
 import MessageSender from "../items/MessageSender";
@@ -8,7 +6,6 @@ import MessageBox from "../items/MessageBox";
 import chatRoomClass from "./ChatRoom.module.css";
 
 const ChatRoom = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
   const { requestState, postData } = useHttpHandler();
 
   return (
@@ -20,8 +17,8 @@ const ChatRoom = () => {
       <header>
         <h1 className="text-3xl font-bold text-center">Question & Answer</h1>
       </header>
-      <MessageBox messages={messages} isFetching={requestState.isFetching} />
-      <MessageSender onMessage={setMessages} onRequest={postData} />
+      <MessageBox isFetching={requestState.isFetching} />
+      <MessageSender requestState={requestState} onRequest={postData} />
     </motion.div>
   );
 };

@@ -1,27 +1,39 @@
-import { useRef, Dispatch, SetStateAction } from "react";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Message } from "../interfaces";
 import { motion } from "framer-motion";
 import { useTheme } from "../../store/useTheme";
+import { useQaMessage } from "../../store/useQaMessage";
+import { requestStateSchema } from "../../hooks/httpHandler";
 import { AxiosResponse } from "axios";
+import Modal from "../ui/Modal";
 
 import IconAsk from "../icons/IconAsk";
 import IconSend from "../icons/IconSend";
 
+interface KeepedQuestion {
+  qaId: string;
+  question: string;
+}
+
 const MessageSender = ({
-  onMessage,
+  requestState,
   onRequest,
 }: {
-  onMessage: Dispatch<SetStateAction<Message[]>>;
+  requestState: requestStateSchema;
   onRequest: (url: string, body: object) => Promise<AxiosResponse>;
 }) => {
   const { theme } = useTheme();
+  const { qaId, updateQaId, setMessages } = useQaMessage();
   const messageRef = useRef<HTMLInputElement>(null);
+  const keepedQuestion = useRef<KeepedQuestion>({ qaId: "", question: "" });
+  const [showModal, setShowModal] = useState(false);
+  const navigation = useNavigate();
 
   const handleAsk = () => {
     if (!messageRef.current?.value.trim()) return;
     const messageQuestion = messageRef.current.value;
-
-    onMessage((prev) => [
+    setMessages((prev) => [
       ...prev,
       {
         title: null,
@@ -33,14 +45,42 @@ const MessageSender = ({
     ]);
     messageRef.current!.value = "";
 
-    onRequest("/qa/ask", { qaId: null, question: messageQuestion })
+    onRequest("/qa/ask", { qaId, question: messageQuestion })
       .then((response) => {
-        const { data } = response;
-        const messages = data.message;
-        messages.forEach((item: Message) => {
-          item.createdAt = new Date().toISOString();
-        });
-        onMessage((prev) => [...prev, ...messages]);
+        if (response.success) {
+          const messages = response.data.message;
+          messages.forEach((item: Message) => {
+            item.createdAt = new Date().toISOString();
+          });
+          setMessages((prev) => [...prev, ...messages]);
+        } else {
+          keepedQuestion.current = {
+            qaId: response.data.qaId,
+            question: messageQuestion,
+          };
+          setShowModal(true);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleReAsk = () => {
+    setShowModal(false);
+    updateQaId(keepedQuestion.current.qaId);
+
+    onRequest("/qa/ask", keepedQuestion.current)
+      .then((response) => {
+        if (response.success) {
+          const messages = response.data.message;
+          messages.forEach((item: Message) => {
+            item.createdAt = new Date().toISOString();
+          });
+          setMessages((prev) => [...prev, ...messages]);
+        } else {
+          setShowModal(true);
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -48,34 +88,56 @@ const MessageSender = ({
   };
 
   return (
-    <div className="flex justify-between items-center">
-      <IconAsk className=" hidden sm:block size-8 dark:fill-white" />
-      <input
-        type="text"
-        placeholder="Ask me a question"
-        className="block w-full py-2 mr-3 sm:mx-3 pl-4 outline-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        name="message"
-        required
-        ref={messageRef}
-        onKeyUp={(e) => {
-          if (e.key === "Enter") {
-            handleAsk();
-          }
-        }}
-      />
-      <motion.button
-        type="button"
-        className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-1"
-        onClick={handleAsk}
-        whileHover={{ scale: 1.1, rotate: -30 }}
-        transition={{ type: "spring", stiffness: 300 }}
-      >
-        <IconSend
-          className="size-8"
-          stroke={theme === "dark" ? "#ffffff" : "#000000"}
+    <>
+      {showModal && (
+        <Modal title="偵測到資料庫版本異動" onClose={() => setShowModal(false)}>
+          <p>{requestState.errorMessage}</p>
+          <div className="flex flex-col sm:flex-row sm:justify-between items-end pt-4 px-2 space-y-4">
+            <button
+              className="py-2 px-4 w-full sm:w-auto rounded-lg bg-[#27ae60] hover:bg-green-400 text-gray-100 hover:text-gray-700 hover:font-bold"
+              onClick={handleReAsk}
+            >
+              仍要提問
+            </button>
+            <button
+              className="py-2 px-4 w-full sm:w-auto rounded-lg bg-[#2f80ed] hover:bg-blue-400 text-gray-100 hover:text-gray-700 hover:font-bold"
+              onClick={() => navigation("/database")}
+            >
+              重新初始化
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      <div className="flex justify-between items-center">
+        <IconAsk className=" hidden sm:block size-8 dark:fill-white" />
+        <input
+          type="text"
+          placeholder="Ask me a question"
+          className="block w-full py-2 mr-3 sm:mx-3 pl-4 outline-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          name="message"
+          required
+          ref={messageRef}
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleAsk();
+            }
+          }}
         />
-      </motion.button>
-    </div>
+        <motion.button
+          type="button"
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-1"
+          onClick={handleAsk}
+          whileHover={{ scale: 1.1, rotate: -30 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <IconSend
+            className="size-8"
+            stroke={theme === "dark" ? "#ffffff" : "#000000"}
+          />
+        </motion.button>
+      </div>
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ import { v4 as uuid4 } from "uuid";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
-interface requestStateSchema {
+export interface requestStateSchema {
   isFetching: boolean;
   statusClass: string;
   errorMessage: string | null;
