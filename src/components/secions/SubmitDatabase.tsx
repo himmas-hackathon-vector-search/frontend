@@ -25,6 +25,8 @@ interface ResponseDataTypes {
   qaId: string | null;
 }
 
+const waitingMessage = "初始化進行中，請等待5分鐘後才可再次初始化。";
+
 const SubmitDatabase = (props: SubmitDatabaseProps) => {
   const navigate = useNavigate();
   const { requestState, postData } = useHttpHandler();
@@ -42,17 +44,13 @@ const SubmitDatabase = (props: SubmitDatabaseProps) => {
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
     if (
-      apiResponse.current.message ===
-        "資料庫剛被初始化完成，請間隔10分鐘後進行。" &&
-      dayjs().isBefore(dayjs(apiResponse.current.qaId))
+      apiResponse.current.message === waitingMessage &&
+      dayjs().isBefore(dayjs(apiResponse.current.qaId).add(5, "minute"))
     ) {
+      const waitForTime = dayjs(apiResponse.current.qaId).add(5, "minute");
       timer = setInterval(() => {
-        const remainingMinutes = dayjs(apiResponse.current.qaId).diff(
-          dayjs(),
-          "minute"
-        );
-        const remainingSeconds =
-          dayjs(apiResponse.current.qaId).diff(dayjs(), "second") % 60;
+        const remainingMinutes = waitForTime.diff(dayjs(), "minute");
+        const remainingSeconds = waitForTime.diff(dayjs(), "second") % 60;
         setShowModal((prev) => ({
           ...prev,
           remainingTime: `${remainingMinutes
@@ -60,7 +58,7 @@ const SubmitDatabase = (props: SubmitDatabaseProps) => {
             .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`,
         }));
 
-        if (timer && dayjs().isAfter(dayjs(apiResponse.current.qaId))) {
+        if (timer && dayjs().isAfter(waitForTime)) {
           clearInterval(timer);
           setShowModal({ show: false, remainingTime: "" });
         }
@@ -132,18 +130,13 @@ const SubmitDatabase = (props: SubmitDatabaseProps) => {
                   },
                   {
                     "bg-gray-500 hover:bg-gray-700 cursor-not-allowed":
-                      apiResponse.current.message ===
-                      "資料庫剛被初始化完成，請間隔10分鐘後進行。",
+                      apiResponse.current.message === waitingMessage,
                   }
                 )}
                 onClick={handleModalClose}
-                disabled={
-                  apiResponse.current.message ===
-                  "資料庫剛被初始化完成，請間隔10分鐘後進行。"
-                }
+                disabled={apiResponse.current.message === waitingMessage}
               >
-                {apiResponse.current.message ===
-                "資料庫剛被初始化完成，請間隔10分鐘後進行。"
+                {apiResponse.current.message === waitingMessage
                   ? showModal.remainingTime
                   : "好喔"}
               </button>

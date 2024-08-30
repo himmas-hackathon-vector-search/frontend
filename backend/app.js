@@ -110,19 +110,17 @@ app.post("/api/database/init", (req, res) => {
       .status(400)
       .json({ success: false, message: "No database info" });
   }
+  // res.json({
+  //   success: true,
+  //   message: "資料庫開始初始化，等待約5分鐘後嘗試進行問答",
+  //   data: { qaId: new Date().toISOString() },
+  // });
+
   res.json({
-    success: true,
-    message: "資料庫開始初始化，等待約5分鐘後嘗試進行問答",
+    success: false,
+    message: "初始化進行中，請等待5分鐘後才可再次初始化。",
     data: { qaId: new Date().toISOString() },
   });
-
-  // const plusedDate = new Date();
-  // plusedDate.setMinutes(plusedDate.getMinutes() + 5);
-  // res.json({
-  //   success: false,
-  //   message: "資料庫剛被初始化完成，請間隔10分鐘後進行。",
-  //   data: { qaId: plusedDate },
-  // });
 
   // res.json({
   //   success: false,
