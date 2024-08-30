@@ -1,14 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Message } from "../interfaces";
 import { motion } from "framer-motion";
 import { useTheme } from "../../store/useTheme";
 import { useQaMessage } from "../../store/useQaMessage";
-import useHttpHandler, { requestStateSchema } from "../../hooks/httpHandler";
+import { requestStateSchema } from "../../hooks/httpHandler";
 import { AxiosResponse } from "axios";
 import Modal from "../ui/Modal";
 
-import IconAsk from "../icons/IconAsk";
+import SystemStatus from "./SystemStatus";
+
 import IconSend from "../icons/IconSend";
 
 interface KeepedQuestion {
@@ -30,28 +31,7 @@ const MessageSender = ({
   const [showModal, setShowModal] = useState(false);
   const navigation = useNavigate();
 
-  const { fetchData } = useHttpHandler();
   const [canAsk, setCanAsk] = useState(false);
-
-  const checkingStatus = useCallback(async () => {
-    const response = await fetchData("/database/status");
-    if (response.success && response.data?.ready) {
-      setCanAsk(true);
-    } else {
-      setCanAsk(false);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    checkingStatus();
-    const timer = setInterval(() => {
-      checkingStatus();
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, [checkingStatus]);
 
   const handleAsk = () => {
     if (!messageRef.current?.value.trim()) return;
@@ -133,19 +113,7 @@ const MessageSender = ({
       )}
 
       <div className="flex justify-between items-center">
-        <div className="relative h-full">
-          <span
-            className={`animate-ping absolute inline-flex size-2 rounded-full opacity-75 ${
-              canAsk ? "bg-green-400" : "bg-red-400"
-            }`}
-          ></span>
-          <span
-            className={`absolute inline-flex rounded-full size-2 ${
-              canAsk ? "bg-green-500" : "bg-red-500"
-            }`}
-          ></span>
-          <IconAsk className="hidden size-8 sm:inline-flex dark:fill-white" />
-        </div>
+        <SystemStatus status={canAsk} onStatus={setCanAsk} />
         <input
           type="text"
           placeholder={
