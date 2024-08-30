@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Message } from "../interfaces";
 import { motion } from "framer-motion";
@@ -33,23 +33,25 @@ const MessageSender = ({
   const { fetchData } = useHttpHandler();
   const [canAsk, setCanAsk] = useState(false);
 
-  useEffect(() => {
-    const checkSystemStatus = async () => {
-      const response = await fetchData("/database/status");
-      if (response.success && response.data?.ready) {
-        setCanAsk(true);
-      } else {
-        setCanAsk(false);
-      }
-      console.log("System status checked", response.data?.ready);
-    };
+  const checkingStatus = useCallback(async () => {
+    const response = await fetchData("/database/status");
+    if (response.success && response.data?.ready) {
+      setCanAsk(true);
+    } else {
+      setCanAsk(false);
+    }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    checkingStatus();
     const timer = setInterval(() => {
-      checkSystemStatus();
+      checkingStatus();
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [fetchData]);
+  }, [checkingStatus]);
 
   const handleAsk = () => {
     if (!messageRef.current?.value.trim()) return;
