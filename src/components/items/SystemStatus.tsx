@@ -53,7 +53,7 @@ const SystemStatus = ({ status, onStatus }: SystemStatusProps) => {
       className="relative h-full"
       data-tooltip-id="remaining-time"
       data-tooltip-content={estimatedTime.current}
-      data-tooltip-place="top"
+      data-tooltip-place="top-start"
     >
       <span
         className={`animate-ping absolute inline-flex size-2 rounded-full opacity-75 ${
