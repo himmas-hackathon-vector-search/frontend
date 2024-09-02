@@ -21,6 +21,8 @@ const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
+    document.documentElement.style.backgroundColor =
+      theme === "dark" ? "#000" : "#fff";
   }, [theme]);
 
   const toggleTheme = () => {
