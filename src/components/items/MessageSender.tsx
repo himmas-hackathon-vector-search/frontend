@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useTheme } from "../../store/useTheme";
 import { useQaMessage } from "../../store/useQaMessage";
 import { requestStateSchema } from "../../hooks/httpHandler";
-import { AxiosResponse } from "axios";
+// import { AxiosResponse } from "axios";
 import Modal from "../ui/Modal";
 
 import SystemStatus from "./SystemStatus";
@@ -18,12 +18,19 @@ interface KeepedQuestion {
   question: string;
 }
 
+interface BaseApiResponse {
+  success: boolean;
+  message: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any;
+}
+
 const MessageSender = ({
   requestState,
   onRequest,
 }: {
   requestState: requestStateSchema;
-  onRequest: (url: string, body: object) => Promise<AxiosResponse>;
+  onRequest: (url: string, body: object) => Promise<BaseApiResponse>;
 }) => {
   const { theme } = useTheme();
   const { qaId, updateQaId, setMessages } = useQaMessage();
