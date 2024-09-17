@@ -48,6 +48,14 @@ app.use((err, req, res, next) => {
   next();
 });
 
+app.post("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "hello express",
+    data: null,
+  });
+});
+
 // 上傳題庫
 app.post(
   "/api/database/upload/base_data",
@@ -197,6 +205,8 @@ app.post("/api/qa/ask", (req, res) => {
   }, 2000);
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
+
+module.exports = app;
